@@ -1,0 +1,27 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "a little CLI bamazon app using mysql",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrmesser/bamazon.git"
+  },
+  "keywords": [
+    "mysql",
+    "inquirer"
+  ],
+  "author": "Jason Messer (messer.jr@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jrmesser/bamazon/issues"
+  },
+  "homepage": "https://github.com/jrmesser/bamazon#readme",
+  "dependencies": {
+    "inquirer": "^3.2.0",
+    "mysql": "^2.13.0"
+  }
+}
