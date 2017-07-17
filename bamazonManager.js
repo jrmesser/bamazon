@@ -53,17 +53,11 @@ var questionNewItem = [
         type: 'input',
         name: 'new_product_name',
         message: 'Please enter the name of the new product',
-        validate: function(value) {
-            return value.toString();
-        }
     },
     {
         type: 'input',
         name: 'new_product_department_name',
-        message: 'Please enter the department name of the new product',
-        validate: function(value) {
-            return value.toString();
-        }
+        message: 'Please enter the department name of the new product'
     },
     {
         type: 'input',
@@ -74,7 +68,7 @@ var questionNewItem = [
                 return true;
             }
             else {
-                return 'Please enter a valid Item ID.'
+                return 'Please enter a valid unit price.'
             }
         }
     },
@@ -87,7 +81,7 @@ var questionNewItem = [
                 return true;
             }
             else {
-                return 'Please enter a valid Item ID.'
+                return 'Please enter a valid quantity.'
             }
         }
     }
@@ -134,7 +128,16 @@ inquirer.prompt(questionMain).then(function (answers) {
         });
     }
     else if(answers.action === 'add new product') {
-
+        inquirer.prompt(questionNewItem).then(function(answers) {
+            connection.connect();
+            connection.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (\'${answers.new_product_name}\', \'${answers.new_product_department_name}\', ${parseFloat(answers.new_product_price)}, ${parseInt(answers.new_product_quantity)})`, function(error, results, fields) {
+                if (results != undefined) console.log("New product added!"); 
+                else {
+                    throw 'Something went wrong adding your new product. Please try again.';
+                }
+                connection.end();
+            });
+        });
     }
     else {
         throw 'ERROR: Something went wrong.';
