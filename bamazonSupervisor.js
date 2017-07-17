@@ -20,7 +20,7 @@ var questions = [
 
 var displayTotals = function(input_connection) {
     input_connection.connect();
-    input_connection.query(`SELECT department_id AS 'Department ID', departments.department_name AS 'Department Name',over_head_costs AS 'Overhead Costs', COALESCE(products.product_sales) as 'Total Sales', COALESCE(products.product_sales - departments.over_head_costs) AS Profits FROM products JOIN departments ON products.department_name = departments.department_name GROUP BY department_id`, function (error, results, fields) {
+    input_connection.query(`SELECT department_id AS 'Department ID', departments.department_name AS 'Department Name',over_head_costs AS 'Overhead Costs', COALESCE(products.product_sales) as 'Total Sales', COALESCE(products.product_sales,0) - departments.over_head_costs AS Profits FROM departments LEFT JOIN products ON products.department_name = departments.department_name GROUP BY department_id`, function (error, results, fields) {
         console.table(results);
         input_connection.end();
     });
