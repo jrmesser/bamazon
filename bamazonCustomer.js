@@ -53,7 +53,7 @@ connection.query('SELECT item_id AS \'Item ID\', product_name AS \'Product Name\
             }
             else {
                 console.log('Placing your order!');
-                connection.query(`UPDATE products SET stock_quantity = ${results[0].stock_quantity - parseInt(answers.desired_amount)} WHERE item_id = ${answers.desired_item}`, function (error, results, fields) {
+                connection.query(`UPDATE products SET stock_quantity = ${results[0].stock_quantity - parseInt(answers.desired_amount)}, product_sales = ${parseInt(answers.desired_amount)} * price WHERE item_id = ${answers.desired_item}`, function (error, results, fields) {
                     if (error) throw error;
                     console.log('Your order has been placed! Have a nice day!');
                     connection.end();
