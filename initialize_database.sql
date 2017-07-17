@@ -17,3 +17,13 @@ insert into bamazon.products values (7, 'How Google Works', 'Books and Games', 1
 insert into bamazon.products values (8, 'New York Times Sunday Edition', 'Books and Games', 5.00, 150);
 insert into bamazon.products values (9, 'eReader PaperColor', 'Electronics', 120.00, 50);
 insert into bamazon.products values (10, 'MacBook Pro', 'Electronics', 6700000.00, 10);
+alter table products add product_sales decimal (19,2) not null default 0.00;
+create table departments(department_id integer(10) not null auto_increment,
+department_name varchar(128) not null,
+over_head_costs decimal(19,2) not null,
+primary key (department_id));
+insert into bamazon.departments values (1, 'Grocery', 2000);
+insert into bamazon.departments values (2, 'Pet Supplies', 100);
+insert into bamazon.departments values (3, 'Liquor', 1000);
+insert into bamazon.departments values (4, 'Books and Games', 50);
+insert into bamazon.departments values (5, 'Electronics', 150);
