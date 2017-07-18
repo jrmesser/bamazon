@@ -48,16 +48,19 @@ var getAddInventoryQuestion = function(inputOptionsArray) {
     ];  
 };
 
-var questionNewItem = [
+var questionNewItem = function(inputDepartmentsArray) {
+    return [
     {
         type: 'input',
         name: 'new_product_name',
         message: 'Please enter the name of the new product',
     },
     {
-        type: 'input',
+        type: 'list',
         name: 'new_product_department_name',
-        message: 'Please enter the department name of the new product'
+        message: 'Please choose the department of the new product.',
+        choices: inputDepartmentsArray,
+        filter: (value) => value.split('\t')[1]
     },
     {
         type: 'input',
@@ -85,7 +88,8 @@ var questionNewItem = [
             }
         }
     }
-];
+    ];
+};
 
 var queries = {
     displayProducts: function() {
@@ -99,8 +103,16 @@ var queries = {
     },
     insertNewProduct: function(new_product_name, new_product_department_name, new_product_price, new_product_quantity) {
         return mysql.format(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)`, [new_product_name, new_product_department_name, new_product_price, new_product_quantity]);
+    },
+    readDepartments: function() {
+        return 'SELECT DISTINCT department_id, department_name FROM departments';
     }
 };
+
+var displayDepartments = function(inputConnection){
+
+}
+
 
 var displayProducts = function(inputConnection) {
     inputConnection.connect();
@@ -149,7 +161,6 @@ var addToInventory = function(inputConnection) {
 };
 
 var insertProduct = function(answers, inputConnection) {
-    inputConnection.connect();
     inputConnection.query(queries.insertNewProduct(answers.new_product_name, answers.new_product_department_name, answers.new_product_price, answers.new_product_quantity), function(error, results, fields) {
         if (results != undefined) console.log("New product added!"); 
         else {
@@ -159,10 +170,19 @@ var insertProduct = function(answers, inputConnection) {
     });
 };
 var addNewProduct = function(inputConnection) {
-    inquirer.prompt(questionNewItem).
-        then(function(answers) {
-            insertProduct(answers, inputConnection);
-        });
+    inputConnection.connect();
+    inputConnection.query(queries.readDepartments(), function(error, results, fields) {
+        if (error) {
+            throw error;
+            inputConnection.end();
+        }
+        //        console.log(results.map((currentValue) => `${currentValue.department_id}\t${currentValue.department_name}`));
+        inquirer.prompt(questionNewItem(results.map((currentValue) => `${currentValue.department_id}\t${currentValue.department_name}`)))
+            .then(function(answers) {
+                insertProduct(answers, inputConnection);
+            });
+    });
+
 };
 
 inquirer.prompt(questionMain).then(function (answers) {
