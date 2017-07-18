@@ -87,20 +87,40 @@ var questionNewItem = [
     }
 ];
 
+var queries = {
+    displayProducts: function() {
+        return 'SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products';
+    },
+    displayLowInventory: function() {
+        return 'SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products WHERE products.stock_quantity < 5';
+    },
+    updateNewInventory: function(addAmount,item_id) {
+        addAmount = addAmount.replace(';','');
+        item_id = item_id.replace(';','');
+        return `UPDATE products SET stock_quantity = stock_quantity + ${addAmount} WHERE item_id = ${item_id}`;
+    },
+    insertNewProduct: function(new_product_name, new_product_department_name, new_product_price, new_product_quantity) {
+        new_product_name = new_product_name.replace(';','');
+        new_product_department_name = new_product_department_name.replace(';','');
+        new_product_price = parseFloat(new_product_price.replace(';',''));
+        new_product_quantity = parseInt(new_product_quantity.replace(';',''));
+        return `INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (\'${new_product_name}\', \'${new_product_department_name}\', ${new_product_price}, ${new_product_quantity})`;
+    }
+};
+
 var displayProducts = function(inputConnection) {
     inputConnection.connect();
-    inputConnection.query('SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products', function (error, results, fields) {
+    inputConnection.query(queries.displayProducts(), function (error, results, fields) {
         if (error) throw error;
         console.log();
         console.table(results);
         inputConnection.end();
-    });
-    
+    });    
 };
 
 var displayLowInventory = function(inputConnection) {
     inputConnection.connect();
-    inputConnection.query('SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products WHERE products.stock_quantity < 5', function (error, results, fields) {
+    inputConnection.query(queries.displayLowInventory(), function (error, results, fields) {
         if (error) throw error;
         console.log();
         if (results[0] === undefined) {
@@ -113,38 +133,45 @@ var displayLowInventory = function(inputConnection) {
     });
 };
 
+var updateInventory = function(answers, inputConnection) {
+    inputConnection.query(queries.updateNewInventory(answers.desired_amount, answers.desired_item_id), function(error, results, fields) {
+            console.log('Thank you. Inventory updated!');
+            inputConnection.end();
+    });
+};
+
 var addToInventory = function(inputConnection) {
     inputConnection.connect();
     inputConnection.query('SELECT DISTINCT item_id, product_name FROM products;', function (error, results, fields) {
         if (error) {
             throw error;
             inputConnection.end();
-        }         
-        inquirer.prompt(getAddInventoryQuestion(results.map(function(currentValue) {return currentValue.item_id + '\t' + currentValue.product_name;}))).then(function(answers) {
-            inputConnection.query(`UPDATE products SET stock_quantity = stock_quantity + ${answers.desired_amount} WHERE item_id = ${answers.desired_item_id}`, function(error, results, fields) {
-                console.log('Thank you. Inventory updated!');
-                inputConnection.end();
+        }
+        inquirer.prompt(getAddInventoryQuestion(results.map(function(currentValue) {return currentValue.item_id + '\t' + currentValue.product_name;}))).
+            then(function(answers) {
+                updateInventory(answers, inputConnection);
             });
-        });
     });
 };
 
-var addNewProduct = function(inputConnection) {
-    inquirer.prompt(questionNewItem).then(function(answers) {
-        inputConnection.connect();
-        inputConnection.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (\'${answers.new_product_name}\', \'${answers.new_product_department_name}\', ${parseFloat(answers.new_product_price)}, ${parseInt(answers.new_product_quantity)})`, function(error, results, fields) {
-            if (results != undefined) console.log("New product added!"); 
-            else {
-                throw 'Something went wrong adding your new product. Please try again.';
-            }
-            inputConnection.end();
-        });
+var insertProduct = function(answers, inputConnection) {
+    inputConnection.connect();
+    inputConnection.query(queries.insertNewProduct(answers.new_product_name, answers.new_product_department_name, answers.new_product_price, answers.new_product_quantity), function(error, results, fields) {
+        if (results != undefined) console.log("New product added!"); 
+        else {
+            throw 'Something went wrong adding your new product. Please try again.';
+        }
+        inputConnection.end();
     });
-
+};
+var addNewProduct = function(inputConnection) {
+    inquirer.prompt(questionNewItem).
+        then(function(answers) {
+            insertProduct(answers, inputConnection);
+        });
 };
 
 inquirer.prompt(questionMain).then(function (answers) {
-
     if (answers.action === 'view products for sale') {
         displayProducts(connection);
     }
