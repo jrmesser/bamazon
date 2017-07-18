@@ -87,57 +87,75 @@ var questionNewItem = [
     }
 ];
 
+var displayProducts = function(inputConnection) {
+    inputConnection.connect();
+    inputConnection.query('SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products', function (error, results, fields) {
+        if (error) throw error;
+        console.log();
+        console.table(results);
+        inputConnection.end();
+    });
+    
+};
+
+var displayLowInventory = function(inputConnection) {
+    inputConnection.connect();
+    inputConnection.query('SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products WHERE products.stock_quantity < 5', function (error, results, fields) {
+        if (error) throw error;
+        console.log();
+        if (results[0] === undefined) {
+            console.log('Everything\'s in good shape. There are no low products.');
+        }
+        else {
+            console.table(results);
+        }
+        inputConnection.end();
+    });
+};
+
+var addToInventory = function(inputConnection) {
+    inputConnection.connect();
+    inputConnection.query('SELECT DISTINCT item_id, product_name FROM products;', function (error, results, fields) {
+        if (error) {
+            throw error;
+            inputConnection.end();
+        }         
+        inquirer.prompt(getAddInventoryQuestion(results.map(function(currentValue) {return currentValue.item_id + '\t' + currentValue.product_name;}))).then(function(answers) {
+            inputConnection.query(`UPDATE products SET stock_quantity = stock_quantity + ${answers.desired_amount} WHERE item_id = ${answers.desired_item_id}`, function(error, results, fields) {
+                console.log('Thank you. Inventory updated!');
+                inputConnection.end();
+            });
+        });
+    });
+};
+
+var addNewProduct = function(inputConnection) {
+    inquirer.prompt(questionNewItem).then(function(answers) {
+        inputConnection.connect();
+        inputConnection.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (\'${answers.new_product_name}\', \'${answers.new_product_department_name}\', ${parseFloat(answers.new_product_price)}, ${parseInt(answers.new_product_quantity)})`, function(error, results, fields) {
+            if (results != undefined) console.log("New product added!"); 
+            else {
+                throw 'Something went wrong adding your new product. Please try again.';
+            }
+            inputConnection.end();
+        });
+    });
+
+};
+
 inquirer.prompt(questionMain).then(function (answers) {
 
     if (answers.action === 'view products for sale') {
-        connection.connect();
-        connection.query('SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products', function (error, results, fields) {
-            if (error) throw error;
-            console.log();
-            console.table(results);
-            connection.end();
-        });
+        displayProducts(connection);
     }
     else if (answers.action === 'view low inventory') {
-        connection.connect();
-        connection.query('SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products WHERE products.stock_quantity < 5', function (error, results, fields) {
-            if (error) throw error;
-            console.log();
-            if (results[0] === undefined) {
-                console.log('Everything\'s in good shape. There are no low products.');
-            }
-            else {
-                console.table(results);
-            }
-            connection.end();
-        });
+        displayLowInventory(connection);
     }
     else if(answers.action === 'add to inventory') {
-        connection.connect();
-        connection.query('SELECT DISTINCT item_id, product_name FROM products;', function (error, results, fields) {
-            if (error) {
-                throw error;
-                connection.end();
-            }         
-            inquirer.prompt(getAddInventoryQuestion(results.map(function(currentValue) {return currentValue.item_id + '\t' + currentValue.product_name;}))).then(function(answers) {
-                connection.query(`UPDATE products SET stock_quantity = stock_quantity + ${answers.desired_amount} WHERE item_id = ${answers.desired_item_id}`, function(error, results, fields) {
-                    console.log('Thank you. Inventory updated!');
-                    connection.end();
-                });
-            });
-        });
+        addToInventory(connection);
     }
     else if(answers.action === 'add new product') {
-        inquirer.prompt(questionNewItem).then(function(answers) {
-            connection.connect();
-            connection.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (\'${answers.new_product_name}\', \'${answers.new_product_department_name}\', ${parseFloat(answers.new_product_price)}, ${parseInt(answers.new_product_quantity)})`, function(error, results, fields) {
-                if (results != undefined) console.log("New product added!"); 
-                else {
-                    throw 'Something went wrong adding your new product. Please try again.';
-                }
-                connection.end();
-            });
-        });
+        addNewProduct(connection);
     }
     else {
         throw 'ERROR: Something went wrong.';
