@@ -95,16 +95,10 @@ var queries = {
         return 'SELECT item_id as \'Item ID\', product_name as \'Product Name\', department_name AS \'Department Name\', price as Price, stock_quantity AS \'Stock Quantity\' FROM products WHERE products.stock_quantity < 5';
     },
     updateNewInventory: function(addAmount,item_id) {
-        addAmount = addAmount.replace(';','');
-        item_id = item_id.replace(';','');
-        return `UPDATE products SET stock_quantity = stock_quantity + ${addAmount} WHERE item_id = ${item_id}`;
+        return mysql.format(`UPDATE products SET stock_quantity = stock_quantity + ? WHERE item_id = ?`[addAmount, item_id]);
     },
     insertNewProduct: function(new_product_name, new_product_department_name, new_product_price, new_product_quantity) {
-        new_product_name = new_product_name.replace(';','');
-        new_product_department_name = new_product_department_name.replace(';','');
-        new_product_price = parseFloat(new_product_price.replace(';',''));
-        new_product_quantity = parseInt(new_product_quantity.replace(';',''));
-        return `INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (\'${new_product_name}\', \'${new_product_department_name}\', ${new_product_price}, ${new_product_quantity})`;
+        return mysql.format(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)`, [new_product_name, new_product_department_name, new_product_price, new_product_quantity]);
     }
 };
 

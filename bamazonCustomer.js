@@ -3,8 +3,6 @@ var inquirer = require('inquirer');
 require('console.table');
 var dbkeys = require('./keys.js');
 
-//console.log('keys:', dbkeys.key);
-
 var questions = [
     {
         type: 'input',
@@ -34,16 +32,27 @@ var questions = [
     }
 ];
 
+var queries = {
+    selectAll: function(){
+        return 'SELECT item_id AS \'Item ID\', product_name AS \'Product Name\', price AS \'Unit Price (USD)\' FROM products';
+    },
+    selectItem: function(item_id) {
+        return mysql.format(`SELECT * FROM products WHERE item_id = ?`,[item_id])
+    },
+    updateProducts: function(desired_amount, item_id) {
+        return mysql.format(`UPDATE products SET stock_quantity = stock_quantity - ?, product_sales = ? * price WHERE item_id = ?`,[desired_amount, desired_amount, item_id])
+    }
+};
+
 var connection = mysql.createConnection(dbkeys.key);
 
 connection.connect();
 
-connection.query('SELECT item_id AS \'Item ID\', product_name AS \'Product Name\', price AS \'Unit Price (USD)\' FROM products', function (error, results, fields) {
+connection.query(queries.selectAll(), function (error, results, fields) {
     if (error) throw error;
-//    console.log('query results are:', results);
     console.table(results);
     inquirer.prompt(questions).then(function (answers) {
-        connection.query(`SELECT * FROM products WHERE item_id = ${answers.desired_item}`, function (error, results, fields) {
+        connection.query(queries.selectItem(answers.desired_item), function (error, results, fields) {
             if (error) throw error;
             if (results[0] === undefined ) {
                 console.log('I\'m sorry, but we don\'t have that in stock!');
@@ -53,7 +62,7 @@ connection.query('SELECT item_id AS \'Item ID\', product_name AS \'Product Name\
             }
             else {
                 console.log('Placing your order!');
-                connection.query(`UPDATE products SET stock_quantity = ${results[0].stock_quantity - parseInt(answers.desired_amount)}, product_sales = ${parseInt(answers.desired_amount)} * price WHERE item_id = ${answers.desired_item}`, function (error, results, fields) {
+                connection.query(queries.updateProducts(parseInt(answers.desired_amount), parseInt(answers.desired_item)), function (error, results, fields) {
                     if (error) throw error;
                     console.log('Your order has been placed! Have a nice day!');
                     connection.end();
@@ -61,9 +70,4 @@ connection.query('SELECT item_id AS \'Item ID\', product_name AS \'Product Name\
             }
         });
     });
-
 });
-
-
-
-//connection.end();
