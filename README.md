@@ -7,6 +7,7 @@ bamazon is a command line application providing a store.
 # getting bamazon running on your machine.
 
 the following steps will get you going on your very own local install of bamazon
+
 requirements:
 * node v7.4.0+
 * npm v4.0.5+
@@ -19,13 +20,13 @@ requirements:
 
 ```javascript
 module.exports.key = {
-    host: '<<servername>>',
+    host: '<<server>>',
     user: '<<username with read and insert permissions>>',
     password : '<<password of that user>>',
     database : 'bamazon'
 };
 ```
-where <<servername>>, <<username ..> and <<password..>> are all replaced by the mysql user discussed above. leave the database line alone!
+where <<server>>, <<username ..> and <<password..>> are all replaced by the mysql user discussed above. leave the database line alone!
 
 * in mysql, run the query in initialize_database.sql.
 * cd into the project root in cmd/terminal and ```npm install```
