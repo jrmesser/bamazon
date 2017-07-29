@@ -26,7 +26,7 @@ module.exports.key = {
     database : 'bamazon'
 };
 ```
-where <<server..>>, <<username ..> and <<password..>> are all replaced by the mysql user discussed above. leave the database line alone!
+where <<server..>>, <<username ..> and <<password..>> are all replaced by the mysql server and user info discussed above. leave the database line alone!
 
 * in mysql, run the query in initialize_database.sql.
 * cd into the project root in cmd/terminal and ```npm install```
