@@ -21,9 +21,10 @@ Item ID  Product Name                   Unit Price (USD)
 8        New York Times Sunday Edition  5
 9        eReader PaperColor             120
 10       MacBook Pro                    6700000
+11       Kitten Degreaser               50.25
 
-? Please enter the Item ID of the product you wish to purchase. 4
-? Please enter the quantity you would like to purchase. 2
+? Please enter the Item ID of the product you wish to purchase. 1
+? Please enter the quantity you would like to purchase. 10
 Placing your order!
 Your order has been placed! Have a nice day!
 ```
@@ -117,9 +118,57 @@ Item ID  Product Name                   Department Name  Price    Stock Quantity
 10       MacBook Pro                    Electronics      6700000  10
 11       Kitten Degreaser               Pet Supplies     50.25    50
 ```
+# supervisor interactions
+
+supervisors can see how the store is performing in sales, grouped by department, and add new departments.
+
+```bash
+$ node bamazonSupervisor.js
+? Welcome to Superbamazon, bamazon's Supervison Application. What can I help you with today? (Use arrow keys)
+> View Product Sales by Department
+  Create New Department
+```
+
+viewing sales by department gives the following:
+
+```bash
+$ node bamazonSupervisor.js
+? Welcome to Superbamazon, bamazon's Supervison Application. What can I help you with today? View Product Sales by Department
+Department ID  Department Name  Overhead Costs  Total Sales  Profits
+-------------  ---------------  --------------  -----------  -------
+1              Grocery          2000            169.9        -1830.1
+2              Pet Supplies     100             0            -100
+3              Liquor           1000            0            -1000
+4              Books and Games  50              0            -50
+5              Electronics      150             0            -150
+```
+the profits column includes overhead costs minus total sales. sales are added when purchases are made by customers.
+
+adding a new department requires following a series of prompts. please be aware that the department name you type will be seen by your supervisors and customers. type carefully.
+
+```bash
+$ node bamazonSupervisor.js
+? Welcome to Superbamazon, bamazon's Supervison Application. What can I help you with today? Create New Department
+? Please enter the name of the new department. R&D
+? Please enter the overhead costs of the new department. 1000000000
+Department Added
+
+messe@WINDOWS-08Q5E2V MINGW64 ~/UCLA_Bootcamp/homework/bamazon (master)
+$ node bamazonSupervisor.js
+? Welcome to Superbamazon, bamazon's Supervison Application. What can I help you with today? View Product Sales by Department
+Department ID  Department Name  Overhead Costs  Total Sales  Profits
+-------------  ---------------  --------------  -----------  -----------
+1              Grocery          2000            169.9        -1830.1
+2              Pet Supplies     100             0            -100
+3              Liquor           1000            0            -1000
+4              Books and Games  50              0            -50
+5              Electronics      150             0            -150
+6              R&D              1000000000      null         -1000000000
+```
+
+as you can see, the total sales column is null until some products are added to the department. 
+
+# getting bamazon running on your machine.
 
 
-
-
-
-
+  
