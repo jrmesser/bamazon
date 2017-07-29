@@ -20,13 +20,13 @@ requirements:
 
 ```javascript
 module.exports.key = {
-    host: '<<server>>',
+    host: '<<servername>>',
     user: '<<username with read and insert permissions>>',
     password : '<<password of that user>>',
     database : 'bamazon'
 };
 ```
-where <<server>>, <<username ..> and <<password..>> are all replaced by the mysql user discussed above. leave the database line alone!
+where <<server..>>, <<username ..> and <<password..>> are all replaced by the mysql user discussed above. leave the database line alone!
 
 * in mysql, run the query in initialize_database.sql.
 * cd into the project root in cmd/terminal and ```npm install```
