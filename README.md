@@ -1,10 +1,10 @@
 # a little CLI bamazon app using mysql
 
-# introduction
+## introduction
 
 bamazon is a command line application providing a store. 
 
-# getting bamazon running on your machine.
+## getting bamazon running on your machine.
 
 the following steps will get you going on your very own local install of bamazon
 
@@ -37,7 +37,9 @@ where <<server..>>, <<username ..> and <<password..>> are all replaced by the my
 
 happy shopping!
 
-# customer interaction
+## using bamazon
+
+### customer interaction
 
 customers can browse and order items from the store:
 ```bash
@@ -64,7 +66,7 @@ Your order has been placed! Have a nice day!
 
 if the quantity you request isn't available, bamazon will let you know.
 
-# manager interactions
+### manager interactions
 
 managers can check on store stock, replenish stock, or add new items to existing departments.
 
@@ -151,7 +153,7 @@ Item ID  Product Name                   Department Name  Price    Stock Quantity
 10       MacBook Pro                    Electronics      6700000  10
 11       Kitten Degreaser               Pet Supplies     50.25    50
 ```
-# supervisor interactions
+### supervisor interactions
 
 supervisors can see how the store is performing in sales, grouped by department, and add new departments.
 
