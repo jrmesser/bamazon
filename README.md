@@ -170,5 +170,34 @@ as you can see, the total sales column is null until some products are added to 
 
 # getting bamazon running on your machine.
 
+the following steps will get you going on your very own local install of bamazon
+requirements:
+* node v7.4.0+
+* npm v4.0.5+
+* mysql v14.4+ with 
+  * a user that can add databases, tables, and insert data into them
+  * a user that can read and insert data into existing tables on that database 
+  * (can be the same user; root will work fine)
+
+* pull the repo, and add a keys.js file in the project root with the following code:
+
+```javascript
+module.exports.key = {
+    host: '<<servername>>',
+    user: '<<username with read and insert permissions>>',
+    password : '<<password of that user>>',
+    database : 'bamazon'
+};
+```
+where <<servername>>, <<username ..> and <<password..>> are all replaced by the mysql user discussed above. leave the database line alone!
+
+* in mysql, run the query in initialize_database.sql.
+* cd into the project root in cmd/terminal and ```npm install```
+* you should be ready to rock. bamazon can be started with the following three commands executed in the project's root directory:
+  * node bamazonCustomer.js
+  * node bamazonManager.js
+  * node bamazonSupervisor.js
+
+happy shopping!
 
   
