@@ -85,7 +85,7 @@ asking bamager for low inventory will display a list of all inventory with less 
 the option to add a new product will prompt you to:
 * free type in the product name
 * choose the product department from the list of current departments
-** talk to a supervisor if you need to add a new department
+  * talk to a supervisor if you need to add a new department
 * the price of the item
 * the quantity of the item
 
