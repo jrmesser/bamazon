@@ -10,7 +10,7 @@ var queries = {
         return `SELECT department_id AS 'Department ID', departments.department_name AS 'Department Name',over_head_costs AS 'Overhead Costs', COALESCE(products.product_sales) as 'Total Sales', COALESCE(products.product_sales,0) - departments.over_head_costs AS Profits FROM departments LEFT JOIN products ON products.department_name = departments.department_name GROUP BY department_id`;
     },
     insertDepartment: function(name, overhead) {
-        return mysql.format(`INSERT INTO departments (department_name, over_head_costs) VALUES (\'${department_name}\', ${parseFloat(department_overhead)})``INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)`, [name, overhead]);
+        return mysql.format(`INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)`, [name, overhead]);
     },
 
 }
